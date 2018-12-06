@@ -32,6 +32,61 @@ import {expect} from '@angular/platform-browser/testing/src/matchers';
     });
 
     describe('switch value changes', () => {
+      it('should switch amongst array values', ()=>{
+        const template = '<ul [ngSwitch]="switchValue">' +
+            '<li *ngSwitchCases="[\'a\', \'b\']">when a or b</li>' +
+            '<li *ngSwitchCases="[\'c\', \'d\']">when a or b</li>' +
+            '</ul>';
+
+        detectChangesAndExpectText('');
+
+        getComponent().switchValue = 'a';
+        detectChangesAndExpectText('when a or b');
+
+        getComponent().switchValue = 'b';
+        detectChangesAndExpectText('when a or b');
+
+        getComponent().switchValue = 'c';
+        detectChangesAndExpectText('when c or d');
+
+        getComponent().switchValue = 'd';
+        detectChangesAndExpectText('when c or d');
+      });
+
+      it('should switch amongst array valuess with fallback to default', () => {
+        const template = '<ul [ngSwitch]="switchValue">' +
+            '<li *ngSwitchCases="[\'a\', \'b\']">when a or b</li>' +
+            '<li *ngSwitchDefault>when default</li>' +
+            '</ul>';
+
+        fixture = createTestComponent(template);
+        detectChangesAndExpectText('when default');
+
+        getComponent().switchValue = 'a';
+        detectChangesAndExpectText('when a or b');
+
+        getComponent().switchValue = 'c';
+        detectChangesAndExpectText('when default');
+
+        getComponent().switchValue = 'b';
+        detectChangesAndExpectText('when a or b');
+      });
+
+      it('should switch amongst array and single values', ()=>{
+        const template = '<ul [ngSwitch]="switchValue">' +
+            '<li *ngSwitchCases="[\'a\', \'b\']">when a or b</li>' +
+            '<li *ngSwitchCase="\'c\'">when c</li>' +
+            '</ul>';
+
+        detectChangesAndExpectText('');
+
+        getComponent().switchValue = 'a';
+        detectChangesAndExpectText('when a or b');
+
+        getComponent().switchValue = 'c';
+        detectChangesAndExpectText('when c');
+      });
+
       it('should switch amongst when values', () => {
         const template = '<ul [ngSwitch]="switchValue">' +
             '<li *ngSwitchCase="\'a\'">when a</li>' +
