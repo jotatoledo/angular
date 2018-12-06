@@ -169,6 +169,50 @@ export class NgSwitchCase implements DoCheck {
 
 /**
  * @ngModule CommonModule
+ *
+ * @usageNotes
+ * ```
+ * <container-element [ngSwitch]="switch_expression">
+ *   <some-element *ngSwitchCases="[match_expression_1, match_expression_2]">...</some-element>
+ * </container-element>
+ *```
+ * @description
+ *
+ * Creates a view that will be added/removed from the parent {@link NgSwitch} when the
+ * given expressions array contains at least one/zero elements that evaluates to respectively
+ * the same value as the switch expression.
+ *
+ * Insert the sub-tree when the expression evaluates to the same value as the enclosing switch
+ * expression.
+ *
+ * If multiple match expressions match the switch expression value, all of them are displayed.
+ *
+ * See {@link NgSwitch} for more details and example.
+ *
+ * @publicApi
+ */
+@Directive({selector: '[ngSwitchCases]'})
+export class NgSwitchCases implements DoCheck {
+  private _view: SwitchView;
+
+  @Input()
+  ngSwitchCases!: any[];
+
+  constructor(
+    viewContainer: ViewContainerRef, templateRef: TemplateRef<Object>,
+    @Host() private ngSwitch: NgSwitch) {
+      ngSwitch._addCase();
+      this._view = new SwitchView(viewContainer, templateRef);
+    }
+
+  ngDoCheck(){
+    const matched = (this.ngSwitchCases ||[]).some(v => this.ngSwitch._matchCase(v));
+    this._view.enforceState(matched);
+  }
+}
+
+/**
+ * @ngModule CommonModule
  * @usageNotes
  * ```
  * <container-element [ngSwitch]="switch_expression">
